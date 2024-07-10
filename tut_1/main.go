@@ -239,8 +239,92 @@ func main(){
 
 
 
-	// Maps just like in c++ and Java (In python a dictionary tho fucntionality is different) : {key: value} pair
+	// Maps just like in c++ and Java (In python a dictionary tho fucntionality is different) : {key: value} pair , here key:string and value:uint16
+	var myMap map[string]uint16 =  make(map[string]uint16)
+	fmt.Println(myMap)
 
+	var myMap2 = map[string]uint16{"Adam":21, "Sarah":26, "Jackson Pollock": 35}
+	fmt.Println(myMap2)
+	fmt.Println(myMap2["Adam"])
+	// map return a (optional) boolean t/f depending on if the element is present int the map or not
+	var age, ok = myMap2["Jordan"]
+	if ok{
+		fmt.Println("The age is %v: ", age)
+	}else{
+		fmt.Println("Invalid Name, not present in the map")
+	}
+
+	// To delete a value
+	delete(myMap2, "Jackson Pollock")
+	fmt.Println(myMap2)
+
+	// To iterate : loops (range)
+
+	for name, age := range myMap2{
+		// while iterating over ma : there is no order to which data is stored (like unordered map) the values will be given at random and it will change when run again (2 output for this iteration will not be same {in most of the time})
+		fmt.Print("Name : ", name)
+		fmt.Print(" and Age : ", age)
+		fmt.Println()
+	}
+
+	// iterating over arrays and slices
+	for i, v := range intSlice3{
+		fmt.Printf("Index: %v and Value is %v \n", i, v)
+	}
+
+	// Go doesn't have while loop, it can be acheived through for loop , eg : This is while loop in GO
+	i := 0;
+	for i < 4{
+		fmt.Println(i)
+		// i = i+1;
+		i += 1;
+	}
+
+	// Or instead of above we can add break keyword (if condition) to make it behave like while loop
+	fmt.Println()
+	for {
+		if i >= 7{
+			break
+		}
+		fmt.Println(i)
+		i = i+1;
+	}
+
+	fmt.Println()
+	// Normal for Loopz
+	for i:=0; i < 5; i++ {
+		fmt.Println(i)
+	}
+
+
+	// Deep dive into strings and rune
+
+	var str5 string = "resumé"
+	fmt.Println(str5)
+
+	var indexed = str5[0];
+	fmt.Println(indexed)
+	fmt.Printf("%v and the type is given by %T\n", indexed, indexed)
+
+	for i,v := range str5{
+		fmt.Printf("The index is : %v and the value is(rune) it's utf-8 value and not the character : %v and memory %v\n", i, v, &v)
+	}
+	// since string are nothing but character array they have memory address for each charcater(rune) increment by 4 bits 
+
+	// GO represent strings in your system by using utf-8 instead of ASCII (7 bits)
+
+	// Tip: Easy way to deal with strings is to cast them into array of rune before iteration 
+	var str6 = []rune("resumé")
+	fmt.Println(str6)
+
+	for i  := range(str6){
+		fmt.Printf("The (utf-8) value at index %v is %v \n", i, str6[i])
+	}
+
+	// Strings are immutable in go (will cause an compilation error)
+	// str5[3] = 'g'
+
+	// Read about Go String Builder : Faster way to concatenate strings
 }
 
 func printMe(){
