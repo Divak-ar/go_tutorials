@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"unicode/utf8"
 )
@@ -57,7 +58,7 @@ func main(){
 	var good = 34;
 	fmt.Println(good)
 
-	// more fancy way : just omit var and use := in place =
+	// more fancy way : just omit var and use := in place of =
 	better := "cool"
 	fmt.Println(better)
 
@@ -97,6 +98,37 @@ func main(){
 	fmt.Println(n1 , n2)
 	var b1, b2 , b3 = calculator(n1, n2)
 	fmt.Println("The Sum is: ", b1, "\nThe Subtraction is: ", b2, "\nOn Multiply: ", b3 )
+	fmt.Printf("The sum is : %v , The multiply is : %v", b1, b3)
+	fmt.Println();
+
+	// A design pattern in go is to encounter error : go throws error if encountered . It can be captured in error type , default value is ni
+	// nil is similar to null but In Go, nil is a predeclared identifier representing the zero value for various types, including pointers, slices, maps, channels, interfaces, and functionsl
+	var err error ;
+	fmt.Println(err);
+
+	var a3,a4 int
+	// import errors package to use error
+	fmt.Scanln(&a3, &a4);
+	
+	if a4 == 0 {
+		err = errors.New("Error in division: Cannot divide by Zero for god's sake")
+		fmt.Println(err)
+	}else{
+		fmt.Println("Divide: " , a3/a4);
+	}
+
+	// More menaingful use (in a func)
+
+	var result , errs = intDivision(a3, a4)
+
+	// now if no error occurs in the code then err should not be nil else it will have "Cannot be divided by zero error : Logical error" value
+	if errs != nil {
+		fmt.Println("This one is from the func :- ")
+		fmt.Println(errs.Error())
+		
+	}else{
+		fmt.Println("Whatever division: ", result)
+	}
 
 }
 
@@ -104,7 +136,7 @@ func printMe(){
 	fmt.Println("Hello from printMe() Function")
 }
 
-// return type is defined before {body} and after (parameter)
+// return type is defined before {body} and after (parameter) , here only one return of int type
 
 func divideMe(n1 int, n2 int) int {
 	if n2 != 0 {
@@ -116,4 +148,14 @@ func divideMe(n1 int, n2 int) int {
 
 func calculator(a1 int, a2 int) (int, int , int){
 	return a1+a2, a1-a2, a1*a2;
+}
+
+func intDivision(x int, y int) (int, error){
+	var err error
+	if y == 0{
+		err = errors.New("cannot be divided by zero error : Logical error")
+		return 0, err
+	}
+
+	return x/y , err
 }
