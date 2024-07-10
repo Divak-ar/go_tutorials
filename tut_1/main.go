@@ -111,7 +111,7 @@ func main(){
 	fmt.Scanln(&a3, &a4);
 	
 	if a4 == 0 {
-		err = errors.New("Error in division: Cannot divide by Zero for god's sake")
+		err = errors.New("error in division: Cannot divide by Zero for god's sake")
 		fmt.Println(err)
 	}else{
 		fmt.Println("Divide: " , a3/a4);
@@ -129,6 +129,117 @@ func main(){
 	}else{
 		fmt.Println("Whatever division: ", result)
 	}
+
+
+
+	// -------------------------------------------------- //
+
+	// In go break after each statement is implicitly declared , so no need to write (functions like if-elseif-else ladder)
+
+	switch  {
+	case errs!=nil:
+		fmt.Println(err.Error())
+	case errs==nil:
+		fmt.Println("result : " , result)
+	}
+
+	// other way(The general way) to use switch to perform multiple task for different value of a expression
+
+	var expression rune
+	fmt.Scan(&expression)
+
+	val := expression - '9'
+	fmt.Println("val is: ", val)
+
+	switch errs {
+	case nil:
+		fmt.Println(errs)
+	default:
+		fmt.Println("Yeah")
+	}
+
+	var value int;
+	fmt.Scanln(&value)
+
+	switch value {
+	case 1:
+	  fmt.Println("Value is 1")
+	case 2, 3:  // Match multiple values
+	  fmt.Println("Value is 2 or 3")
+	fallthrough // Fall through to the next case even if a match occurred above
+	case 4:
+	  fmt.Println("Value is 4 or less (including 1, 2, 3)")
+	default:
+	  fmt.Println("Value is greater than 4")
+	}
+
+	// In this example, if value is 2, both the case 2, 3 and case 4 blocks will be executed due to fallthrough.
+
+
+
+
+
+
+	// ------------------------------- Arrays , Slices , Map and Loops
+
+	const alen int = 5;
+
+	var int32Arr [alen]int32;
+
+	for i := 0; i < alen; i++ {
+		fmt.Printf("Enter element %d: ", i+1)
+		_,eror := fmt.Scan(&int32Arr[i])
+
+		if eror != nil {
+            fmt.Println("Error reading input:", err)
+            break // Exit the loop if there's an error
+        }
+	}
+
+	fmt.Println(int32Arr[0], " The Second Element: ", int32Arr[1])
+	fmt.Println("Index Slicing: " , int32Arr[0: alen-2])
+	fmt.Println("Getting the Adress: ", &int32Arr[1], " ", &int32Arr[2])
+
+
+	// intArr := [3]int32{4,7,9} is same as intArr := [...] int32 {6,3,5,7}
+
+	intArr := [...] int32 {6,3,5,7}
+	fmt.Println(intArr)
+	fmt.Println("Arrays are of fixed size , there size has to be predefined with a constant has it size can't be assigned/changed on runtime")
+	fmt.Println("To create an array of dynamic size , whose size we assign at runtime use Slices")
+
+	// Slices : 
+	var intSlice []int32 = []int32{2,3,5}
+	fmt.Println(intSlice)
+	fmt.Printf("The length is %v with capacity %v", len(intSlice), cap(intSlice))
+	fmt.Println("Cap is a function that gives capacity of the Slice")
+
+	// append is used to increment length (a new array is made to accomodate 7 just like ArrayList in java or Vectors in c++) the size incremented here Slices in Go don't directly append to the pre-existing array. They create a new underlying array with a doubled capacity (up to a certain limit) when necessary to accommodate additional elements.
+
+	intSlice = append(intSlice, 7)
+	// 7 is added at the end of the intSlice 
+	fmt.Println(intSlice)
+	fmt.Printf("The length is %v with capacity %v", len(intSlice), cap(intSlice))
+	fmt.Println()
+
+	// can append another slice to the pre-existing one (adding mutiple values) using sliceName... operaator
+	var intSlice2 []int32 = []int32 {43,23,56}
+	intSlice = append(intSlice, intSlice2...)
+	fmt.Println(intSlice)
+	fmt.Printf("The length is %v with capacity %v", len(intSlice2), cap(intSlice2))
+	fmt.Println()
+
+	// another way to make slice is using make fn , it takes datatype, length of slice, capacity of slice(optional)
+	var intSlice3 []int32 = make([]int32 , 3, 6)
+	// adding values
+	intSlice3 = append(intSlice3, 10, 20, 30) 
+	fmt.Println(intSlice3)
+	fmt.Printf("The length is %v with capacity %v", len(intSlice3), cap(intSlice3))
+	fmt.Println()
+
+
+
+	// Maps just like in c++ and Java (In python a dictionary tho fucntionality is different) : {key: value} pair
 
 }
 
