@@ -103,7 +103,56 @@ func main() {
 	fmt.Println("This Points to any int32 address in memory: Specially allocated to it ", ptr)
 	fmt.Println("Value stored at this location is: {default value for int} ", *ptr)
 
-	// var v int32
+	*ptr = 10
+	fmt.Println("Value assigned is : " , ptr)
 
 
+	var v int32 = 45
+	p = &v
+
+	fmt.Printf("ptr p now ref to mem address of v : %v and the value of v is : %v \n", p, *p)
+
+
+	// Slices uses pointer under the hood , so if we copy the value of one slice to another , it will be reference , so any changes made into one will reflect the other 
+
+	var slice = []int32{2,5,7}
+	var sliceCopy = slice
+	sliceCopy[2] = -1
+	fmt.Println(sliceCopy)
+	fmt.Println(slice)
+
+	// Pointers in func
+
+	var a1 = [3]float32{2,3,4}
+	fmt.Printf("\nThe memory location of the a1 is: %p \n", &a1)
+	var a2 [3]float32 = square(a1)
+	fmt.Println("The modified val is: ", a2)
+
+	// passing by address and pointers
+	fmt.Printf("\nThe memory location of the a1 is: %p \n", &a1)
+	var a3 [3]float32 = addressSquare(&a1)
+	fmt.Println("The modified val is: ", a1)
+	fmt.Println("The modified val is: ", a3)
+	
+	// Since we passed by reference(address) the value of a changes as well
+}
+
+func square(a [3]float32) [3]float32{
+	fmt.Printf("The memory location of the a {int func body} is: %p \n", &a)
+	// the memory location is different cause it is pass by value so a1 doesn't changes it returns modified value to a2
+	// we can use pointers so that we don't create another array here a to store a1 and return it (pass address and use pointer in func)
+	for i := range a{
+		a[i] = a[i]*a[i]
+	}
+
+	return a
+}
+
+func addressSquare(a *[3]float32) [3]float32{
+	fmt.Printf("The memory location of the a {int func body: using poiters} is: %p \n", a)
+	for i := range a{
+		a[i] = a[i]*a[i]
+	}
+
+	return *a
 }
