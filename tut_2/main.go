@@ -92,4 +92,18 @@ func main() {
 	canMakeIt(eEngine1, 92)
 
 
+	// ------------------------------------
+
+	// Pointers ; they are variables that stores the location of some data (*)
+
+	var p *int32
+	fmt.Println(p)
+	// doesn't point to anything now : nil
+	var ptr *int32 = new(int32)
+	fmt.Println("This Points to any int32 address in memory: Specially allocated to it ", ptr)
+	fmt.Println("Value stored at this location is: {default value for int} ", *ptr)
+
+	// var v int32
+
+
 }
