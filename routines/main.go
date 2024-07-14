@@ -50,7 +50,7 @@ func dbCall(i int){
 	time.Sleep(time.Duration(delay)*time.Millisecond)
 	fmt.Println("The result from the database is: ", dbData[i])
 	m.Lock()
-	// concurrency matters on where we put our lock , because for a particular thread this part is locked , the next running parallely(on other cpu core) can't access this until this is released ....  but if we put the lock after delay declaration , it will make our program non-concurrent , it is due to the fact that the other thread can't make changes to res arr as they can't make no fn call, so they will for lock to be released then they will make fn call.....serially (no-concurrency)
+	// concurrency matters on where we put our lock , because for a particular thread this part is locked , the next running parallely(on other cpu core) can't access this until this is released ....  but if we put the lock after delay declaration , it will make our program non-concurrent , it is due to the fact that the other thread can't make changes to res arr as they can't make no fn call, so they will for lock to be released then they will make fn call.....serially (no-concurrency) : There are other mutex as well RWMutex for read/write locks .... whole db concurrency concepts exact and some OS concepts with parallel threading and data items mutex 
 	res = append(res, dbData[i])
 	m.Unlock()
 	wg.Done()
