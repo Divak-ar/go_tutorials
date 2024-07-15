@@ -42,6 +42,48 @@ func main(){
 	//when we have mutiple threads modifying the same memory location in same time will lead to unexpected result: for eg corrupt memory and  it can lead to missing data , so we shouldn't write like this, instead use mutex to preserve integrity making only one thread to work on the memory block at a time ; m.lock() and m.unlock()
 
 
+
+	// ------------------------------ Channels : The main fn for channels is to hold data, thread safety (no race condition: r/w conflict condition) and Listen to Data(when data is added or removed and block code execution till any of it occurs) the datagoroutines communicates data usin channels
+
+	// var c = make(chan int)
+	// // channels are like vectors (except they don't adjust size) c : [1]
+	// c <- 1
+	// var i = <- c
+	// // gives a deadlock error  : the code blocks until someone reads from it
+	// fmt.Println(i)
+	// now channel c is empty and i holds the value 1 , c : []
+
+	// So this isn't the way to use channels use slices/array for storing purposes
+	
+	
+	//---------------------------- Channels are used in conjuction with goRoutines
+
+	// var ch = make(chan int)
+	// go process2(ch)
+	// // <-ch : directly poping out the value to print rather than storing it in a varaible : the channel is empty after this
+	// fmt.Println(<-ch)
+
+	// using channel to get mutiple values using for loop
+    var ch = make(chan int)
+	go process3(ch)
+	for i:= range ch{
+		fmt.Println(i)
+	}
+
+
+	// Buffer channel --- Can store mutiple values , ch : [1,2,4,7,9]
+	var c = make(chan int, 5)
+	go process4(c)
+
+	for i:= range c{
+		fmt.Println(i)
+		// Some Work
+		time.Sleep(time.Second+1)
+	}
+
+	// When we use normal channel , the process fn remains open/in memeory, till the main fn is done with the channel in the above loop
+	// The process fn has no need to stay active, it can complete it's execution and leave , we use buffer channel for this (extra memory management)
+
 }
 
 func dbCall(i int){
@@ -54,4 +96,29 @@ func dbCall(i int){
 	res = append(res, dbData[i])
 	m.Unlock()
 	wg.Done()
+}
+
+// func process(channel chan int){
+// 	channel <- 123
+// }
+
+// func process2(channel chan int){
+// 	channel <- 123
+//   
+// }
+
+func process3(ch chan int){
+	defer close(ch)
+	for i:= 0; i<5; i++{
+		ch <- i;
+	}
+}
+
+func process4(c chan int){
+	// it closes the channel just after the execution of this fn :- prevent deadlock error
+	defer close(c)
+	for i:=0; i<5; i++{
+		c <- i;
+	}
+	fmt.Println("Exiting Process from Process Function")
 }
