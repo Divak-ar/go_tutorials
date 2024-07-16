@@ -6,6 +6,8 @@ import (
 	"unicode/utf8"
 )
 
+// go help in terminal --- go help <commmand name>
+
 // execution starts from main as always , the compiler look for main func , rest func are defined in main or out side and then imported here for use
 
 func main(){
