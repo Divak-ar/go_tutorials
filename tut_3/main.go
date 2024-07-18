@@ -61,5 +61,26 @@ func main(){
 	// goenv in terminal : gives you all the files for development , GOOS=linux will give you a linux exe file that can run on linux , GOOS windows will give you windows exe file , go run {filename} , go build -> to build exe for main.go (it by default look for main.go) 
 	// to get the list of Os and arch(arhictecture for compiled program): go tool dist list
 
-	
+	// Reminder: Go is pass by value and not pass by reference (use pointers for it)
+
+	// Defer statement : defer before a func or statement will make it excute at the end of that func body (so it skips it execution when encountered and execute it at last) .... multiple deffered are executed in LIFO fashion (a stack), reverse order in which they are defered
+
+	fmt.Println()
+	defer fmt.Println("Hello - Will executed last as LIFO")
+	fmt.Println("World")
+
+	defer fmt.Println("One")
+	defer fmt.Println("Two - Will executed before other defer as LIFo")
+	fmt.Println("What's the use of defer? ")
+	fmt.Println("defer -> allows a function to postpone the execution of a statement until the surrounding function has completed")
+
+	myDefer(6)
+
+	// in defer stack we have 5---1(in myDefer func) , two , one , Hello :- order of output for defer statement
+}
+
+func myDefer (num int) {
+	for i:= 1; i < num; i++{
+		defer fmt.Println(i)
+	}
 }
