@@ -100,6 +100,17 @@ func createOneCourse(w http.ResponseWriter, r *http.Request){
 	// generate unique id (convert it into string)
 	// append the new course into courses slice
 
+	fmt.Println(course.CourseName)
+	fmt.Printf("The data sent is: %v" , course)
+
+	// handling duplicate courses (don't add it to the db , check and return)
+	for _ , c := range courses{
+		if c.CourseName == course.CourseName{
+			json.NewEncoder(w).Encode("This course is already present, try updating it's value instead of creating another")
+			return;
+		}
+	}
+
 	rand.Seed(time.Now().UnixNano())
 	// convrting to string
 	course.CourseId = strconv.Itoa(rand.Intn(100))
