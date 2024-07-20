@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -84,11 +85,13 @@ func createOneCourse(w http.ResponseWriter, r *http.Request){
 		json.NewEncoder(w).Encode("Please send some data")
 	}
 
-	// Passing empty data like {} empty json
 
 	var course Course
 
+	// getting the data from user and storing it in course
 	_ = json.NewDecoder(r.Body).Decode(&course)
+
+	// Passing empty data like {} empty json
 	if IsEmpty(&course){
 		json.NewEncoder(w).Encode("Empty Json : NO data")
 		return
@@ -103,16 +106,119 @@ func createOneCourse(w http.ResponseWriter, r *http.Request){
 
 	// updating the db
 	courses = append(courses, course)
-	// Returning the response
+
+	// Returning the response . res.send("msg") or res.status(200).send("msg") in nodejs
 	json.NewEncoder(w).Encode(course)
 }
 
 func updateOneCourse ( w http.ResponseWriter, r *http.Request){
+	// update the course based on unique id - findOneandUpadte(in sql and mongoose) , since we are using any db here
+	// we will iterate over slices , get the specific id , make changes , then update the slice with new values
+	// how to remake the slice after update -> courses = append(course[:index], course[index+1:]...) , it updates the courses db and removes the eleement with specific index/id
+
+
+	fmt.Println("Update One Course")
+	w.Header().Set("Content-Type", "application/json")
+
+	// use mux.Vars(r) to get all the values in request params  (here the courseID)
+	params := mux.Vars(r)
+
+	// loop, find the element with specific id and remove the value , get the new value from request body and add it to the db
+
+	for index, course := range courses {
+		// courses is our fake db (slice to store the data)
+		if course.CourseId == params["id"]{
+			// removing that id from courses
+			courses = append(courses[:index], courses[index+1:]...)
+			var course Course
+			// getting the updated values from body
+			_ = json.NewDecoder(r.Body).Decode(&course)
+			// giving the id and the result of values is taken from the body
+			course.CourseId = params["id"]
+			courses = append(courses, course)
+			json.NewEncoder(w).Encode(course)
+			// id found and db updated just return from here
+			return
+		}
+	}
+
+	// Send a response when id is not found 
+	json.NewEncoder(w).Encode("COurse of this id doesn't exist")
+}
+
+const AddForm = `
+<form method="POST" action="/add">
+URL: <input type="text" name="url">
+<input type="submit" value="Add">
+</form>
+`
+
+func deleteOneCourse(w http.ResponseWriter, r *http.Request){
 	
+	fmt.Println("Delete One Course")
+	w.Header().Set("Content-Type", "application/json")
+
+	params := mux.Vars(r)
+
+	for index, course := range courses{
+		if course.CourseId == params["id"] {
+			// removing that element
+			courses = append(courses[:index], courses[index+1:]...)
+			break;
+		}
+	}
+
+	json.NewEncoder(w).Encode("the course is deleted")
+
+	// return backend response in html format, for that we have to define the string in some variable , here AddForm is variable 
+	// if we get some form data by the user then good else we display this 
+	// for this : set  w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	url := r.FormValue("url")
+    if url == "" {
+        fmt.Fprint(w, AddForm)
+        return
+    }
 }
 
 func main() {
 	fmt.Println("Working with APIs in GO 👟👟👟 : (CRUD Operations on building an API)")
 
+	r := mux.NewRouter()
 
+	// seeding/filling the db with some test data
+
+	courses = append(courses, Course{CourseId: "2", CourseName: "ReactJs", CoursePrice: 299, Author: &Author{Fullname: "Divakar", Website: "dp.dev"}})
+	courses = append(courses, Course{CourseId: "4", CourseName: "MERN", CoursePrice: 599, Author: &Author{Fullname: "Divakar", Website: "mern.dev"}})
+
+	// routing
+	r.HandleFunc("/", serveHome).Methods("GET")
+	r.HandleFunc("/courses", getAllCourses).Methods("GET")
+	// whatever we pass here as params query -> {id} the same name has to used when defining the controller , so params["id"] will be used in controller where params := mux.Vars(r) , r is request -> *http.Request type data
+	r.HandleFunc("/course/{id}", getOneCourse).Methods("GET")
+	// sending/creating new data -> Post (must be encrypted and protected)
+	r.HandleFunc("/course", createOneCourse).Methods("POST")
+	// for updating use put 
+	r.HandleFunc("/course/{id}", updateOneCourse).Methods("PUT")
+	r.HandleFunc("/course/{id}", deleteOneCourse).Methods("DELETE")
+
+	// listening to port
+	log.Fatal(http.ListenAndServe(":4000", r))
 }
+
+// routing in golang with MUX
+
+// r.HandleFunc("/books/{title}", CreateBook).Methods("POST")
+// r.HandleFunc("/books/{title}", ReadBook).Methods("GET")
+// r.HandleFunc("/books/{title}", UpdateBook).Methods("PUT")
+// r.HandleFunc("/books/{title}", DeleteBook).Methods("DELETE")
+
+// Restrict the request handler to specific hostnames or subdomains.
+// r.HandleFunc("/books/{title}", BookHandler).Host("www.mybookstore.com")
+
+// Restrict the request handler to http/https.
+// r.HandleFunc("/secure", SecureHandler).Schemes("https")
+// r.HandleFunc("/insecure", InsecureHandler).Schemes("http")
+
+// Add Queries 
+// r.HandleFunc("/authors", authorBook).Queries("surname", "{surname}")
