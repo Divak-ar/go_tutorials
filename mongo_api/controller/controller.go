@@ -114,7 +114,7 @@ func deleteAllMovie() int64{
 // get all movies from mongo
 
 func getAllMovies() []primitive.M{
-	// we will get an cursor (not the data directly) we have to loop over cursor to get the answer (uses .Next() property for traversing - Linkedlist)...........get all movies and append it to our return array/slice , use bson.D{{}} or bson.M{{}} -> differ with ordering of data and case sensitive data (ABc then ABc only)
+	// we will get an cursor (not the data directly) we have to loop over cursor to get the answer (uses .Next() property for traversing - Linkedlist)...........get all movies and append it to our return array/slice , use bson.D{{}} or bson.M{{}} -> differ with ordering of data and case sensitive data (ABc then ABc only) .  D is a slice and M is a map. They  can be used to build representations of BSON using native Go types. filter here is bson.D{{}} meaning get all movies as empty {} are passed to bson
 
 	cursor, err := collection.Find(context.Background(), bson.D{{}})
 
@@ -127,8 +127,9 @@ func getAllMovies() []primitive.M{
 	var movies []primitive.M
 
 	for cursor.Next(context.Background()){
+		// the data stored in mongo is bson - a movie (so movies is array of such data) . bson.M is the same as primitive.M - An unordered representation of a BSON document, represented as a map[string]interface{}.
 		var movie bson.M
-		err := cursor.Decode(&movies)
+		err := cursor.Decode(&movie)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -158,13 +159,47 @@ func CreateMovie(w http.ResponseWriter, r *http.Request){
 
 	// setting headers
 	w.Header().Set("Content-Type", "application/x-www-form-urlencode")
+	w.Header().Set("Allow-Control-Allow_Methods", "POST")
 
+	var movie model.Netflix
+	_ = json.Decoder(r.Body).Decode(&movie)
+
+	insertOneMovie(movie)
+	json.NewEncoder(w).Encode(movie)
 	
 }
 
+func MarkAsWatched(w http.ResponseWriter, r *http.Request){
 
+	// setting headers
+	w.Header().Set("Content-Type", "application/x-www-form-urlencode")
+	w.Header().Set("Allow-Control-Allow_Methods", "PUT")
 
-params := mux.Vars(r)
-var data model.Netflix
-_ = json.Decoder(r.Body).Decode(&data)
+	params := mux.Vars(r)
+	// mux.Vars(r) returns a map of string:string , to access the value of any key - map["key"]
+	fmt.Println("Params : ", params)
+	updateOneMovie(params["id"])
+	json.NewEncoder(w).Encode(params["id"])
 
+}
+
+func DeleteAMovie(w http.ResponseWriter, r *http.Request){
+	
+	w.Header().Set("Content-Type", "application/x-www-form-urlencode")
+	w.Header().Set("Allow-Control-Allow_Methods", "DELETE")
+
+	params := mux.Vars(r)
+
+	deleteOneMovie(params["id"])
+
+	json.NewEncoder(w).Encode(params["id"])
+}
+
+func DeleteAllMovies(w http.ResponseWriter, r *http.Request){
+	
+	w.Header().Set("Content-Type", "application/x-www-form-urlencode")
+	w.Header().Set("Allow-Control-Allow_Methods", "DELETE")
+
+	count := deleteAllMovie()
+	json.NewEncoder(w).Encode(count)
+}
