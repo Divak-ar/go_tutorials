@@ -6,3 +6,5 @@ api/api.exe
 # ignore all txt file in file system folder
 fs_web/*.txt
 
+**/*.env
+
