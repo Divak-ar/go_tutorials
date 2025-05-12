@@ -1,6 +1,6 @@
 # Go Tutorials 🦫
 
-![Go Gopher](https://golang.org/doc/gopher/gopher.png)
+![Go Gopher](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT64MUSJsELElo4AMBfmvUoF-2Cy-j3dkJ52Q&s)
 
 I made this repository public because my friends wanted to learn Go. As a Go enthusiast (or "goblin" as we like to call ourselves), I wanted to share my learning journey with others who are interested in this powerful language.
 
